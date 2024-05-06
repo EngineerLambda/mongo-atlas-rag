@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from pymongo import MongoClient
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.gemini import GeminiEmbedding
 from llama_index.llms.gemini import Gemini
 from llama_index.core import ServiceContext
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
@@ -10,6 +10,7 @@ from llama_index.core import VectorStoreIndex
 
 
 # web app config
+st.set_page_config(page_title= "Chat with ELE 562 notes",layout="wide", page_icon="📙")
 st.title("Chat with ELE 562 notes")
 
 # load credentials
@@ -21,17 +22,14 @@ DB_NAME = secrets["DB_NAME"]
 COLLECTION_NAME = secrets["COLLECTION_NAME"]
 INDEX_NAME = secrets["INDEX_NAME"]
 
-# set llama index cache path for model downloads
-os.environ['LLAMA_INDEX_CACHE_DIR'] = os.path.join(os.path.abspath('../'), 'cache')
-
 # set up mongo client
 mongodb_client = MongoClient(ATLAS_URI)
 
 # load embedding model at first instance and load to cache for subsequent runs
-embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+embed_model = GeminiEmbedding(model_name="models/embedding-001")
 
 # using free google gemini-model API as llm
-llm = Gemini()
+llm = Gemini(model="models/gemini-pro")
 
 # llama_index service context
 service_context = ServiceContext.from_defaults(embed_model=embed_model, llm=llm)
@@ -45,10 +43,9 @@ vector_store = MongoDBAtlasVectorSearch(mongodb_client = mongodb_client,
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 index = VectorStoreIndex.from_vector_store(vector_store=vector_store, service_context=service_context)
 
-query_llm = index.as_query_engine()
+query_llm = index.as_chat_engine()
 
 # chat innterface for consistent queries
-   
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -70,4 +67,3 @@ if prompt:
         if answer:
             st.chat_message("ai").markdown(answer)
             st.session_state.messages.append([answer, "ai"])
-
