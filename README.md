@@ -3,3 +3,5 @@ A streamlit app created to chat with a document that has been pre-populated into
 The interface is made interactive as a chat interface
 
 The app is a simple RAG app built with Google's Gemini-Pro model and embedding, mongodb vector store and streamlit
+
+Notebook and code source reference: earn.stackup.dev
