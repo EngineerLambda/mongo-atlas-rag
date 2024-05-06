@@ -43,7 +43,7 @@ vector_store = MongoDBAtlasVectorSearch(mongodb_client = mongodb_client,
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 index = VectorStoreIndex.from_vector_store(vector_store=vector_store, service_context=service_context)
 
-query_llm = index.as_chat_engine()
+query_llm = index.as_query_engine()
 
 # chat innterface for consistent queries
 if "messages" not in st.session_state:
