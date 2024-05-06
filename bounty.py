@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from pymongo import MongoClient
-from llama_index.embeddings.gemini import GeminiEmbedding
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.gemini import Gemini
 from llama_index.core import ServiceContext
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
@@ -22,11 +22,14 @@ DB_NAME = secrets["DB_NAME"]
 COLLECTION_NAME = secrets["COLLECTION_NAME"]
 INDEX_NAME = secrets["INDEX_NAME"]
 
+# set llama index cache path for model downloads
+os.environ['LLAMA_INDEX_CACHE_DIR'] = os.path.join(os.path.abspath('../'), 'cache')
+
 # set up mongo client
 mongodb_client = MongoClient(ATLAS_URI)
 
 # load embedding model at first instance and load to cache for subsequent runs
-embed_model = GeminiEmbedding(model_name="models/embedding-001")
+embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
 # using free google gemini-model API as llm
 llm = Gemini(model="models/gemini-pro")
