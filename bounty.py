@@ -1,13 +1,12 @@
 import streamlit as st
 import os
 from pymongo import MongoClient
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.gemini import GeminiEmbedding
 from llama_index.llms.gemini import Gemini
 from llama_index.core import ServiceContext
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 from llama_index.core import StorageContext
 from llama_index.core import VectorStoreIndex
-
 
 # web app config
 st.set_page_config(page_title= "Chat with ELE 562 notes",layout="wide", page_icon="📙")
@@ -28,8 +27,8 @@ os.environ['LLAMA_INDEX_CACHE_DIR'] = os.path.join(os.path.abspath('../'), 'cach
 # set up mongo client
 mongodb_client = MongoClient(ATLAS_URI)
 
-# load embedding model at first instance and load to cache for subsequent runs
-embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+# load embedding model at first instance and load to cache for subsequent run s
+embed_model = GeminiEmbedding(model_name="models/embedding-001")
 
 # using free google gemini-model API as llm
 llm = Gemini(model="models/gemini-pro")
