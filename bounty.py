@@ -21,13 +21,10 @@ DB_NAME = secrets["DB_NAME"]
 COLLECTION_NAME = secrets["COLLECTION_NAME"]
 INDEX_NAME = secrets["INDEX_NAME"]
 
-# set llama index cache path for model downloads
-os.environ['LLAMA_INDEX_CACHE_DIR'] = os.path.join(os.path.abspath('../'), 'cache')
-
 # set up mongo client
 mongodb_client = MongoClient(ATLAS_URI)
 
-# load embedding model at first instance and load to cache for subsequent run s
+# load embedding model
 embed_model = GeminiEmbedding(model_name="models/embedding-001")
 
 # using free google gemini-model API as llm
@@ -39,15 +36,14 @@ service_context = ServiceContext.from_defaults(embed_model=embed_model, llm=llm)
 # vector store access
 vector_store = MongoDBAtlasVectorSearch(mongodb_client = mongodb_client,
                                  db_name = DB_NAME, collection_name = COLLECTION_NAME,
-                                 index_name  = INDEX_NAME,
-                                 )
+                                 index_name  = INDEX_NAME)
 
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 index = VectorStoreIndex.from_vector_store(vector_store=vector_store, service_context=service_context)
 
 query_llm = index.as_query_engine()
 
-# chat innterface for consistent queries
+# chat interface for consistent queries
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
