@@ -28,7 +28,7 @@ mongodb_client = MongoClient(ATLAS_URI)
 embed_model = GeminiEmbedding(model_name="models/embedding-001")
 
 # using free google gemini-model API as llm
-llm = Gemini(model="models/gemini-pro")
+llm = Gemini(model="models/gemini-pro-latest")
 
 # llama_index service context
 service_context = ServiceContext.from_defaults(embed_model=embed_model, llm=llm)
